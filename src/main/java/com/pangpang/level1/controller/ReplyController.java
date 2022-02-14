@@ -4,6 +4,7 @@ import com.pangpang.level1.entity.Board;
 import com.pangpang.level1.entity.Reply;
 import com.pangpang.level1.model.BoardDto;
 import com.pangpang.level1.model.ReplyDto;
+import com.pangpang.level1.repository.BoardRepository;
 import com.pangpang.level1.repository.ReplyRepository;
 import com.pangpang.level1.service.ReplyServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ public class ReplyController {
 
     private final ReplyServiceImpl replyServiceImpl;
     private final ReplyRepository replyRepository;
+    private final BoardRepository boardRepository;
 
     // 조회 : 게시판 글 id에 맞는 글 가져오기 ==> service 단으로 넘어가서 데이터 넘겨받기
     @GetMapping("/api/reply/{boardId}")

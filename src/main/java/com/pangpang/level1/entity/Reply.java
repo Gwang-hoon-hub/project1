@@ -25,6 +25,7 @@ public class Reply extends Timestamped {
     @Column(nullable = false)
     private String replyText;
 
+
     public Reply(Long boardId, String replyUsername, String replyText) {
         this.boardId = boardId;
         this.replyUsername = replyUsername;

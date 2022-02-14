@@ -210,7 +210,7 @@
         // 사용자가 내용을 올바르게 입력하였는지 확인합니다.
         function isValidContents(contents) {
             if (contents == '') {
-                alert('내용을 입력해주세요');
+                alert('댓글 내용을 입력해주세요');
                 return false;
             }
             if (contents.trim().length > 140) {
@@ -269,28 +269,30 @@
 
         // 메모를 불러와서 보여줍니다.
         function getMessages() {
+            console.log("여기 불려지는가")
             // 1. 기존 메모 내용을 지웁니다.
             $('#cards-box').empty();
             // 2. 메모 목록을 불러와서 HTML로 붙입니다.
             $.ajax({
                 type: 'GET',
-                url: '/api/boards',
+                url: '/api/reply',
                 success: function (response) {
                     console.log(response)
                     for (let i = 0; i < response.length; i++) {
                         let message = response[i];
-                        let id = message['id'];
-                        let username = message['username'];
-                        let contents = message['contents'];
+                        let id = message['replyId'];
+                        let boardId = message['boardId'];
+                        let username = message['replyUsername'];
+                        let contents = message['replyText'];
                         let modifiedAt = message['modifiedAt'];
-                        addHTML(id, username, contents, modifiedAt);
+                        addHTML(replyId, boardId, replyUsername, replyText, modifiedAt);
                     }
                 }
             })
         }
 
         // 메모 하나를 HTML로 만들어서 body 태그 내 원하는 곳에 붙입니다.
-        function addHTML(id, username, contents, modifiedAt) {
+        function addHTML(id, boardId, username, contents, modifiedAt) {
             // 1. HTML 태그를 만듭니다.
             let tempHtml = `<div class="card">
                                 <!-- date/username 영역 -->
@@ -300,6 +302,15 @@
                                     </div>
                                     <div id="${id}-username" class="username">
                                         ${username}
+                                    </div>
+                                </div>
+                                <!-- date/게시판번호 영역 -->
+                                <div class="metadata">
+                                    <div class="date">
+                                        ${modifiedAt}
+                                    </div>
+                                    <div id="${id}-username" class="username">
+                                        ${boardId}
                                     </div>
                                 </div>
                                 <!-- contents 조회/수정 영역-->
@@ -313,9 +324,9 @@
                                 </div>
                                 <!-- 버튼 영역-->
                                 <div class="footer">
-                                    <img id="${id}-edit" class="icon-start-edit" src="images/edit.png" alt="" onclick="editPost('${id}')">
-                                    <img id="${id}-delete" class="icon-delete" src="images/delete.png" alt="" onclick="deleteOne('${id}')">
-                                    <img id="${id}-submit" class="icon-end-edit" src="images/done.png" alt="" onclick="submitEdit('${id}')">
+                                    <img id="${id}-edit" class="icon-start-edit" src="../static/images/edit.png" alt="" onclick="editPost('${id}')">
+                                    <img id="${id}-delete" class="icon-delete" src="../static/images/delete.png" alt="" onclick="deleteOne('${id}')">
+                                    <img id="${id}-submit" class="icon-end-edit" src="../static/images/done.png" alt="" onclick="submitEdit('${id}')">
                                 </div>
                             </div>`;
             // 2. #cards-box 에 HTML을 붙인다.
@@ -340,7 +351,7 @@
             // 5. POST /api/board 에 data를 전달합니다.
             $.ajax({
                 type: "POST",
-                url: "/api/boards",
+                url: "/api/reply",
                 contentType: "application/json",
                 data: JSON.stringify(data),
                 success: function (response) {
@@ -367,7 +378,7 @@
             // 4. PUT /api/board/{id} 에 data를 전달합니다.
             $.ajax({
                 type: "PATCH",
-                url: `/api/board/${id}`,
+                url: `/api/reply/${id}`,
                 contentType: "application/json",
                 data: JSON.stringify(data),
                 success: function (response) {
@@ -382,7 +393,7 @@
             // 1. DELETE /api/board/{id} 에 요청해서 메모를 삭제합니다.
             $.ajax({
                 type: "DELETE",
-                url: `/api/board/${id}`,
+                url: `/api/reply/${id}`,
                 success: function (response) {
                     alert('메시지 삭제에 성공하였습니다.');
                     window.location.reload();
@@ -401,17 +412,18 @@
 </div>
 <div class="wrap">
     <div class="header">
-        <h2>Timeline Service</h2>
+        <h2>여기는 댓글 댓글 응답하라</h2>
         <p>
-            공유하고 싶은 소식을 입력해주세요.
-            24시간이 지난 뒤에는 사라집니다.
+            응답합니다.
+            여기는 댓글 댓글
+            응답합니다.
         </p>
     </div>
     <div class="area-write">
-        <textarea class="field" placeholder="공유하고 싶은 소식을 입력해주세요" name="contents" id="contents" cols="30"
+        <textarea class="field" placeholder="댓글을 입력해주세요." name="contents" id="contents" cols="30"
                   rows="10"></textarea>
         <!--            <button class="btn btn-danger" onclick="writePost()">작성하기</button>-->
-        <img src="images/send.png" alt="" onclick="writePost()">
+        <img src="../static/images/send.png" alt="" onclick="writePost()">
     </div>
     <div id="cards-box" class="area-read">
         <div class="card">
@@ -435,9 +447,9 @@
             </div>
             <!-- 버튼 영역-->
             <div class="footer">
-                <img id="1-edit" onclick="editPost('1')" class="icon-start-edit" src="images/edit.png" alt="">
-                <img id="1-delete" onclick="deleteOne('1')" class="icon-delete" src="images/delete.png" alt="">
-                <img id="1-submit" onclick="submitEdit('1')" class="icon-end-edit" src="images/done.png" alt="">
+                <img id="1-edit" onclick="editPost('1')" class="icon-start-edit" src="../static/images/edit.png" alt="">
+                <img id="1-delete" onclick="deleteOne('1')" class="icon-delete" src="../static/images/delete.png" alt="">
+                <img id="1-submit" onclick="submitEdit('1')" class="icon-end-edit" src="../static/images/done.png" alt="">
             </div>
         </div>
     </div>
